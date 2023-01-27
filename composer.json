@@ -15,6 +15,10 @@
 
         ]
     },
+    "scripts": {
+        "phpcs": "phpcs",
+        "phpunit": "phpunit"
+    },
     "authors": [
         {
             "name": "sergei",

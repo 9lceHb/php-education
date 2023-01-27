@@ -37,7 +37,7 @@ function getNode($key, $value, $type)
     return $node;
 }
 
-function getValue($value, $depth= 0)
+function getValue($value)
 {
     switch (gettype($value)) {
         case 'boolean':
@@ -98,11 +98,11 @@ function gendiff($path1, $path2)
     return implode("\n", $resultStrings);
 }
 
-$args = Docopt::handle($doc, array('version'=>'gendiff 1.0'));
+$args = Docopt::handle($doc, array('version' => 'gendiff 1.0'));
 $path1 = $args["<firstFile>"];
 $path2 = $args["<secondFile>"];
 
-echo gendiff($path1, $path2).PHP_EOL;
+echo gendiff($path1, $path2) . PHP_EOL;
 // gendiff($path1, $path2);
 // print_r(json_encode($args['<firstFile>']));
 // foreach ($args as $k=>$v)
