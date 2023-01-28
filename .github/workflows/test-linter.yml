@@ -1,0 +1,39 @@
+# This is a basic workflow to help you get started with Actions
+name: PHP CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup PHP
+        # Action gives to setup the PHP environment to test application
+        # https://github.com/shivammathur/setup-php
+      uses: shivammathur/setup-php@v2
+      with:
+        # Specify the PHP version
+        php-version: '8.2.1'
+    - name: Install
+      # Install project
+      run: make install
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install
+      run: make install
+
+    - name: Run linter
+      run: make lint
+      
+    - name: Code Climate Coverage Action
+      uses: paambaati/codeclimate-action@v3.2.0
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TESTCOVERAGE_PHP }}
+      with:
+        coverageCommand: make test-coverage
+        debug: true
