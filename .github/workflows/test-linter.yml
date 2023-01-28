@@ -21,12 +21,6 @@ jobs:
       # Install project
       run: make install
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-
-    - name: Install
-      run: make install
-
     - name: Run linter
       run: make lint
       
