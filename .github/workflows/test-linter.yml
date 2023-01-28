@@ -23,7 +23,10 @@ jobs:
 
     - name: Run linter
       run: make lint
-      
+
+    - name: Run coverage
+      run: make test-coverage
+
     - name: Code Climate Coverage Action
       uses: paambaati/codeclimate-action@v3.2.0
       env:
