@@ -5,7 +5,7 @@ namespace Hexlet\Utils\Tests;
 use PHPUnit\Framework\TestCase;
 
 use function Hexlet\Code\Utils\genDiff;
-use function Hexlet\Code\Utils\getFixtureFullPath;
+use function Hexlet\Code\Parsers\getFixtureFullPath;
 
 // класс UtilsTest наследует класс TestCase
 // имя класса совпадает с именем файла

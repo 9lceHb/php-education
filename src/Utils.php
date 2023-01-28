@@ -3,6 +3,7 @@
 namespace Hexlet\Code\Utils;
 
 use function Functional\flat_map;
+use function Hexlet\Code\Parsers\render;
 
 function getNode($key, $value, $type)
 {
@@ -24,20 +25,6 @@ function getValue($value)
         default:
             return $value;
     }
-}
-
-function getFixtureFullPath($fixtureName)
-{
-    // $parts = [__DIR__, 'tests', 'fixtures', $fixtureName];
-    $parts = ['tests', 'fixtures', $fixtureName];
-    return realpath(implode('/', $parts));
-}
-
-function render($path)
-{
-    $fullPath = realpath($path);
-    $text = file_get_contents($fullPath);
-    return json_decode($text, true);
 }
 
 function genDiff($path1, $path2)
