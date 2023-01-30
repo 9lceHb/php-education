@@ -16,6 +16,7 @@
     }
   },
   "group1": {
+    "vas": [1, 2, 4],
     "foo": "bar",
     "baz": "bars",
     "nest": "str"

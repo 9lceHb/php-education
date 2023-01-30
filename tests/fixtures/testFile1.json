@@ -1,17 +1,30 @@
 {
-    "common1": 123,
-    "common": {
-      "setting1": "Value 1",
-      "setting3": {
-        "key1": "Value4"
+  "common": {
+    "setting1": "Value 1",
+    "setting2": 200,
+    "setting3": true,
+    "setting6": {
+      "key": "value",
+      "doge": {
+        "wow": ""
       }
-    },
-    "group3": {
-        "deep": {
-          "id": {
-            "number": 45
-          }
-        },
-        "fee": 100500
+    }
+  },
+  "group1": {
+    "vas": [1, 2, 3],
+    "baz": "bas",
+    "foo": "bar1",
+    "nest": {
+      "key": "value"
+    }
+  },
+  "group2": {
+    "abc": 12345,
+    "deep": {
+      "id": 45,
+      "supper": {
+        "tringel": 24
       }
+    }
+  }
 }
