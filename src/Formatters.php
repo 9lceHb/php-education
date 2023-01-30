@@ -51,32 +51,33 @@ function getSymbol($type)
     return ' ';
 }
 
+function iterNode2($tree, $deph, $defaultIndent)
+{
+    $indent = str_repeat($defaultIndent, $deph);
+    $bracketIndent = str_repeat($defaultIndent, $deph + 1);
+    return flat_map($tree, function ($node) use ($indent, $deph, $defaultIndent, $bracketIndent) {
+        $key = $node["key"];
+        $value = getValue($node['value']);
+        $children = $node["children"];
+        $symbol = getSymbol($node["type"]);
+        if (is_array($children)) {
+            $deph += 1;
+            $newNode = iterNode2($children, $deph, $defaultIndent);
+            return ["{$indent}  {$symbol} {$key}: {", ...$newNode, "{$bracketIndent}}"];
+        }
+        if (!is_array($value)) {
+            return "{$indent}  {$symbol} {$key}: {$value}";
+        }
+        $deph += 1;
+        $newValue = iterValue($value, $deph);
+        return ["{$indent}  {$symbol} {$key}: {", ...$newValue, "{$bracketIndent}}"];
+    });
+}
+
 function stylish($tree)
 {
     $defaultIndent = '    ';
-    function iterNode($tree, $deph, $defaultIndent)
-    {
-        $indent = str_repeat($defaultIndent, $deph);
-        $bracketIndent = str_repeat($defaultIndent, $deph + 1);
-        return flat_map($tree, function ($node) use ($indent, $deph, $defaultIndent, $bracketIndent) {
-            $key = $node["key"];
-            $value = getValue($node['value']);
-            $children = $node["children"];
-            $symbol = getSymbol($node["type"]);
-            if (is_array($children)) {
-                $deph += 1;
-                $newNode = iterNode($children, $deph, $defaultIndent);
-                return ["{$indent}  {$symbol} {$key}: {", ...$newNode, "{$bracketIndent}}"];
-            }
-            if (!is_array($value)) {
-                return "{$indent}  {$symbol} {$key}: {$value}";
-            }
-            $deph += 1;
-            $newValue = iterValue($value, $deph);
-            return ["{$indent}  {$symbol} {$key}: {", ...$newValue, "{$bracketIndent}}"];
-        });
-    }
-    $result = iterNode($tree, 0, $defaultIndent);
+    $result = iterNode2($tree, 0, $defaultIndent);
     return "{\n" . implode("\n", $result) . "\n}";
 }
 
