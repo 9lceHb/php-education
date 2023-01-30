@@ -21,25 +21,41 @@ function getValue($value, $formatter = 'stylish')
     }
 }
 
+function iterValue($array, $deph)
+{
+    $defaultIndentValues = '    ';
+    $indent = str_repeat($defaultIndentValues, $deph);
+    $bracketIndent = str_repeat($defaultIndentValues, $deph + 1);
+    return flat_map(array_keys($array), function ($key) use ($indent, $array, $deph, $bracketIndent) {
+        $value = getValue($array[$key]);
+        // $value = $array[$key];
+        if (is_array($value)) {
+            $deph += 1;
+            $newValue = iterValue($value, $deph);
+            return ["{$indent}    {$key}: {", ...$newValue, "{$bracketIndent}}"];
+        }
+        return ["{$indent}    {$key}: {$value}"];
+    });
+}
+function getSymbol($type)
+{
+    switch ($type) {
+        case 'deleted':
+            return '-';
+        case 'changedFrom':
+            return '-';
+        case 'added':
+            return '+';
+        case 'changedTo':
+            return '+';
+        default:
+            return ' ';
+    }
+}
+
 function stylish($tree)
 {
     $defaultIndent = '    ';
-    function iterValue($array, $deph)
-    {
-        $defaultIndentValues = '    ';
-        $indent = str_repeat($defaultIndentValues, $deph);
-        $bracketIndent = str_repeat($defaultIndentValues, $deph + 1);
-        return flat_map(array_keys($array), function ($key) use ($indent, $array, $deph, $bracketIndent) {
-            $value = getValue($array[$key]);
-            // $value = $array[$key];
-            if (is_array($value)) {
-                $deph += 1;
-                $newValue = iterValue($value, $deph);
-                return ["{$indent}    {$key}: {", ...$newValue, "{$bracketIndent}}"];
-            }
-            return ["{$indent}    {$key}: {$value}"];
-        });
-    }
     function iterNode($tree, $deph, $defaultIndent)
     {
         $indent = str_repeat($defaultIndent, $deph);
@@ -47,35 +63,19 @@ function stylish($tree)
         $result = flat_map($tree, function ($node) use ($indent, $deph, $defaultIndent, $bracketIndent) {
             $key = $node["key"];
             $value = getValue($node['value']);
-            // $value = $node['value'];
             $children = $node["children"];
+            $symbol = getSymbol($node["type"]);
             if (is_array($children)) {
                 $deph += 1;
                 $newNode = iterNode($children, $deph, $defaultIndent);
-                return ["{$indent}    {$key}: {", ...$newNode, "{$bracketIndent}}"];
-            }
-            if ($node["type"] === 'deleted' || $node["type"] === 'changedFrom') {
-                if (!is_array($value)) {
-                    return "{$indent}  - {$key}: {$value}";
-                }
-                $deph += 1;
-                $newValue = iterValue($value, $deph);
-                return ["{$indent}  - {$key}: {", ...$newValue, "{$bracketIndent}}"];
-            }
-            if ($node["type"] === 'added' || $node["type"] === 'changedTo') {
-                if (!is_array($value)) {
-                    return "{$indent}  + {$key}: {$value}";
-                }
-                $deph += 1;
-                $newValue = iterValue($value, $deph);
-                return ["{$indent}  + {$key}: {", ...$newValue, "{$bracketIndent}}"];
+                return ["{$indent}  {$symbol} {$key}: {", ...$newNode, "{$bracketIndent}}"];
             }
             if (!is_array($value)) {
-                return "{$indent}    {$key}: {$value}";
+                return "{$indent}  {$symbol} {$key}: {$value}";
             }
             $deph += 1;
             $newValue = iterValue($value, $deph);
-            return ["{$indent}    {$key}: {", ...$newValue, "{$bracketIndent}}"];
+            return ["{$indent}  {$symbol} {$key}: {", ...$newValue, "{$bracketIndent}}"];
         });
         return $result;
     }
@@ -106,15 +106,10 @@ function plain($tree)
                 case 'added':
                     return "Property '{$path}' was added with value: {$value}";
                 case 'unchanged':
-                    return;
                 case 'changedTo':
                     return;
                 default:
-                    $filtredArray = array_filter($tree, function ($innerNode) use ($key) {
-                        return ($key === $innerNode["key"] && $innerNode["type"] === 'changedTo');
-                    });
-                    $filtredArray = array_values(($filtredArray));
-                    $newValue = getValue($filtredArray[0]["value"], 'plain');
+                    $newValue = getNewValue($tree, $key);
                     return "Property '{$path}' was updated. From {$value} to {$newValue}";
             }
         });
@@ -122,4 +117,13 @@ function plain($tree)
     }
     $result = inner($tree, '');
     return implode("\n", $result);
+}
+
+function getNewValue($tree, $key)
+{
+    $filtredArray = array_filter($tree, function ($innerNode) use ($key) {
+        return ($key === $innerNode["key"] && $innerNode["type"] === 'changedTo');
+    });
+    $filtredArray = array_values(($filtredArray));
+    return getValue($filtredArray[0]["value"], 'plain');
 }

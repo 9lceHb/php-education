@@ -38,19 +38,21 @@ function genDiff($before, $after)
         return [getNode($key, 'changedArray', null, $children)];
     });
     $result = array_merge($deletedElem, $addedElem, $sameKeyElem);
-    $sorted = sort($result, function ($node1, $node2) {
-        if ($node1["key"] !== $node2["key"]) {
-            return $node1["key"] <=> $node2["key"];
-        }
-        if ($node1["type"] === 'changedFrom') {
-            return -1;
-        }
-        if ($node1["type"] === 'changedTo') {
-            return 1;
-        }
-        return 0;
-    });
+    $sorted = sort($result, fn ($node1, $node2) => sortFunction($node1, $node2));
     return $sorted;
+}
+function sortFunction($node1, $node2)
+{
+    if ($node1["key"] !== $node2["key"]) {
+        return $node1["key"] <=> $node2["key"];
+    }
+    if ($node1["type"] === 'changedFrom') {
+        return -1;
+    }
+    if ($node1["type"] === 'changedTo') {
+        return 1;
+    }
+    return 0;
 }
 
 function chooseFormat($format, $diff)
