@@ -4,7 +4,7 @@ namespace Hexlet\Utils\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-use function Hexlet\Code\Utils\genDiff;
+use function Differ\Differ\genDiff;
 use function Hexlet\Code\Parsers\getFixtureFullPath;
 use function Hexlet\Code\Formatters\stylish;
 use function Hexlet\Code\Parsers\render;
@@ -80,9 +80,9 @@ class UtilsTest extends TestCase
     }
     public function testGendiff(): void
     {
-        $beforeFile = render(getFixtureFullPath("file1.json"));
-        $afterFile = render(getFixtureFullPath("file2.json"));
-        $this->assertEquals($this->testAnswer1, stylish(genDiff($beforeFile, $afterFile)));
-        $this->assertEquals($this->testAnswer2, plain(genDiff($beforeFile, $afterFile)));
+        $path1 = getFixtureFullPath("file1.json");
+        $path2 = getFixtureFullPath("file2.json");
+        $this->assertEquals($this->testAnswer1, genDiff($path1, $path2, 'stylish'));
+        $this->assertEquals($this->testAnswer2, genDiff($path1, $path2, 'plain'));
     }
 }

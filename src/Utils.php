@@ -1,11 +1,12 @@
 <?php
 
-namespace Hexlet\Code\Utils;
+namespace Differ\Differ;
 
 use function Functional\flat_map;
 use function Functional\sort;
 use function Hexlet\Code\Formatters\stylish;
 use function Hexlet\Code\Formatters\plain;
+use function Hexlet\Code\Parsers\render;
 
 function getNode($key, $type, $value = null, $chilren = null)
 {
@@ -18,7 +19,7 @@ function getNode($key, $type, $value = null, $chilren = null)
     return $node;
 }
 
-function genDiff($before, $after)
+function findDiff($before, $after)
 {
     $keysDeleted = array_keys(array_diff_key($before, $after));
     $keysAdded = array_keys(array_diff_key($after, $before));
@@ -34,7 +35,7 @@ function genDiff($before, $after)
         if (!is_array($valueBefore) || !is_array($valueAfter)) {
             return [getNode($key, 'changedFrom', $valueBefore), getNode($key, 'changedTo', $valueAfter)];
         }
-        $children = genDiff($valueBefore, $valueAfter);
+        $children = findDiff($valueBefore, $valueAfter);
         return [getNode($key, 'changedArray', null, $children)];
     });
     $result = array_merge($deletedElem, $addedElem, $sameKeyElem);
@@ -65,4 +66,12 @@ function chooseFormat($format, $diff)
         return json_encode($diff);
     }
     return plain($diff);
+}
+
+function genDiff($path1, $path2, $format)
+{
+    $before = render($path1);
+    $after = render($path2);
+    $diff = findDiff($before, $after);
+    return chooseFormat($format, $diff);
 }
