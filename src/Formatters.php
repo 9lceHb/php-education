@@ -133,5 +133,5 @@ function getNewValue($tree, $key)
     });
     $filtredArray = array_values(($filtredArray));
     $newValue = getValue($filtredArray[0]["value"], 'plain');
-    return $newValue;
+    return is_array($newValue) ? "[complex value]" : $newValue;
 }
