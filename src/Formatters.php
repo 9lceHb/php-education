@@ -131,5 +131,9 @@ function getNewValue($tree, $key)
         return ($key === $innerNode["key"] && $innerNode["type"] === 'changedTo');
     });
     $filtredArray = array_values(($filtredArray));
-    return getValue($filtredArray[0]["value"], 'plain');
+    $newValue = getValue($filtredArray[0]["value"], 'plain');
+    print_r("--------------------\n");
+    print_r("{$newValue}\n");
+    print_r("--------------------\n");
+    return $newValue;
 }
