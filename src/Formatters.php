@@ -81,26 +81,27 @@ function stylish($tree)
     return "{\n" . implode("\n", $result) . "\n}";
 }
 
+function inner1($tree, $path)
+{
+    return flat_map($tree, function ($node) use ($path, $tree) {
+        $key = $node["key"];
+        $value = is_array($node['value']) ? "[complex value]" : getValue($node['value'], 'plain');
+        $children = $node["children"];
+        $path = "{$path}.{$key}";
+        $type = $node["type"];
+        if (is_array($children)) {
+            $newNode = inner1($children, $path);
+            return [...$newNode];
+        }
+        $path = substr($path, 1);
+        $resultString = getResultString($node, $path, $tree, $value);
+        return $resultString;
+    });
+}
+
 function plain($tree)
 {
-    function inner($tree, $path)
-    {
-        return flat_map($tree, function ($node) use ($path, $tree) {
-            $key = $node["key"];
-            $value = is_array($node['value']) ? "[complex value]" : getValue($node['value'], 'plain');
-            $children = $node["children"];
-            $path = "{$path}.{$key}";
-            $type = $node["type"];
-            if (is_array($children)) {
-                $newNode = inner($children, $path);
-                return [...$newNode];
-            }
-            $path = substr($path, 1);
-            $resultString = getResultString($node, $path, $tree, $value);
-            return $resultString;
-        });
-    }
-    $result = inner($tree, '');
+    $result = inner1($tree, '');
     return implode("\n", $result);
 }
 

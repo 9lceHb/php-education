@@ -1,11 +1,31 @@
 {
-    "common1": 123,
-    "common2": 234,
-    "common": {
-      "setting1": "Value 1",
-      "setting2": "Value 2",
-      "setting3": {
-        "key1": "Value3"
+  "common": {
+    "follow": false,
+    "setting1": "Value 1",
+    "setting3": null,
+    "setting4": "blah blah",
+    "setting5": {
+      "key5": "value5"
+    },
+    "setting6": {
+      "key": "value",
+      "ops": "vops",
+      "doge": {
+        "wow": "so much"
       }
     }
+  },
+  "group1": {
+    "foo": "bar",
+    "baz": "bars",
+    "nest": "str"
+  },
+  "group3": {
+    "deep": {
+      "id": {
+        "number": 45
+      }
+    },
+    "fee": 100500
+  }
 }
