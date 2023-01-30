@@ -13,7 +13,8 @@
         },
         "files": [
             "src/Utils.php",
-            "src/Parsers.php"
+            "src/Parsers.php",
+            "src/Stylish.php"
         ]
     },
     "scripts": {

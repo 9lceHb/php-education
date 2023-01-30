@@ -4,45 +4,38 @@ namespace Hexlet\Code\Utils;
 
 use function Functional\flat_map;
 use function Hexlet\Code\Parsers\render;
+use function Hexlet\Code\Stylish\stylish;
 
-function getNode($key, $value, $type)
+function getNode($key, $type, $value = null, $chilren = null)
 {
     $node = [
         "key" => $key,
+        "type" => $type,
         "value" => $value,
-        "type" => $type
+        "children" => $chilren
     ];
     return $node;
 }
 
-function getValue($value)
+function genDiff($before, $after)
 {
-    switch (gettype($value)) {
-        case 'boolean':
-            return $value ? 'true' : 'false';
-        case 'NULL':
-            return 'null';
-        default:
-            return $value;
-    }
-}
-
-function genDiff($path1, $path2)
-{
-    $before = render($path1);
-    $after = render($path2);
     $keysDeleted = array_keys(array_diff_key($before, $after));
     $keysAdded = array_keys(array_diff_key($after, $before));
     $keysIntersected = array_keys(array_intersect_key($before, $after));
-    $deletedElem = array_map(fn($key) => getNode($key, $before[$key], 'deleted'), $keysDeleted);
-    $addedElem = array_map(fn($key) => getNode($key, $after[$key], 'added'), $keysAdded);
+    $deletedElem = array_map(fn($key) => getNode($key, 'deleted', $before[$key]), $keysDeleted);
+    $addedElem = array_map(fn($key) => getNode($key, 'added', $after[$key]), $keysAdded);
     $sameKeyElem = flat_map($keysIntersected, function ($key) use ($before, $after) {
-        if ($before[$key] === $after[$key]) {
-            return [getNode($key, $before[$key], 'unchanged')];
+        $valueBefore = $before[$key];
+        $valueAfter = $after[$key];
+        if ($valueBefore === $valueAfter) {
+            return [getNode($key, 'unchanged', $valueBefore)];
         }
-        return [getNode($key, $before[$key], 'changedFrom'), getNode($key, $after[$key], 'changedTo')];
+        if (!is_array($valueBefore) || !is_array($valueAfter)) {
+            return [getNode($key, 'changedFrom', $valueBefore), getNode($key, 'changedTo', $valueAfter)];
+        }
+        $children = genDiff($valueBefore, $valueAfter);
+        return [getNode($key, 'changedArray', null, $children)];
     });
-    // $sameKeyElem = flatten($sameKeyElem);
     $result = array_merge($deletedElem, $addedElem, $sameKeyElem);
     usort($result, function ($node1, $node2) {
         if ($node1["key"] !== $node2["key"]) {
@@ -56,18 +49,13 @@ function genDiff($path1, $path2)
         }
         return 0;
     });
-    $resultStrings = array_map(function ($node) {
-        // $key = var_export($node["key"]);
-        // $value = var_export($node['value']);
-        $key = $node["key"];
-        $value = getValue($node['value']);
-        if ($node["type"] === 'deleted' || $node["type"] === 'changedFrom') {
-            return "- {$key}: {$value}";
-        }
-        if ($node["type"] === 'added' || $node["type"] === 'changedTo') {
-            return "+ {$key}: {$value}";
-        }
-        return "  {$key}: {$value}";
-    }, $result);
-    return implode("\n", $resultStrings);
+    return $result;
+}
+
+function chooseFormat($format, $diff)
+{
+    if ($format === "stylish") {
+        return stylish($diff);
+    }
+    return stylish($diff);
 }

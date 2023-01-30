@@ -11,11 +11,16 @@ if (file_exists($autoloadPath1)) {
 }
 
 use function  Hexlet\Code\Parsers\render;
-use function Hexlet\Code\Utils\getFixtureFullPath;
+use function Hexlet\Code\Parsers\getFixtureFullPath;
 use Symfony\Component\Yaml\Yaml;
+use function Hexlet\Code\Utils\genDiff;
+use function Hexlet\Code\Stylish\stylish;
 
-$arr = render("tests/fixtures/file2.json");
+$arr1 = render("tests/fixtures/file1.json");
+$arr2 = render("tests/fixtures/file2.json");
+$result = genDiff($arr1, $arr2);
+print_r(stylish($result));
 // $arr = render(getFixtureFullPath('file1.json'));
-$yaml = Yaml::dump($arr);
-print_r($yaml);
+// $yaml = Yaml::dump($arr);
+// print_r($yaml);
 // file_put_contents("tests/fixtures/file2.yaml", $yaml);

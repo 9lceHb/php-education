@@ -2,7 +2,9 @@
 
 <?php
 
-use function \Hexlet\Code\Utils\genDiff;
+use function Hexlet\Code\Utils\genDiff;
+use function Hexlet\Code\Parsers\render;
+use function Hexlet\Code\Utils\chooseFormat;
 
 $autoloadPath1 = __DIR__ . '/../../../autoload.php';
 $autoloadPath2 = __DIR__ . '/../vendor/autoload.php';
@@ -30,8 +32,11 @@ DOC;
 $args = Docopt::handle($doc, array('version' => 'gendiff 1.0'));
 $path1 = $args["<firstFile>"];
 $path2 = $args["<secondFile>"];
+$beforeFile = render($path1);
+$afterFile = render($path2);
+$diff = genDiff($beforeFile, $afterFile);
 
-echo genDiff($path1, $path2) . PHP_EOL;
+echo chooseFormat($args['--format'], $diff) . PHP_EOL;
 // gendiff($path1, $path2);
 // print_r(json_encode($args['<firstFile>']));
 // foreach ($args as $k=>$v)

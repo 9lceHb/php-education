@@ -1,0 +1,17 @@
+{
+    "common1": 123,
+    "common": {
+      "setting1": "Value 1",
+      "setting3": {
+        "key1": "Value4"
+      }
+    },
+    "group3": {
+        "deep": {
+          "id": {
+            "number": 45
+          }
+        },
+        "fee": 100500
+      }
+}
