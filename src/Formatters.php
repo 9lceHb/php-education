@@ -39,18 +39,16 @@ function iterValue($array, $deph)
 }
 function getSymbol($type)
 {
-    switch ($type) {
-        case 'deleted':
-            return '-';
-        case 'changedFrom':
-            return '-';
-        case 'added':
-            return '+';
-        case 'changedTo':
-            return '+';
-        default:
-            return ' ';
+    $symbols = [
+        'deleted' => '-',
+        'changedFrom' => '-',
+        'added' => '+',
+        'changedTo' => '+',
+    ];
+    if (array_key_exists($type, $symbols)) {
+        return $symbols[$type];
     }
+    return ' ';
 }
 
 function stylish($tree)
@@ -60,7 +58,7 @@ function stylish($tree)
     {
         $indent = str_repeat($defaultIndent, $deph);
         $bracketIndent = str_repeat($defaultIndent, $deph + 1);
-        $result = flat_map($tree, function ($node) use ($indent, $deph, $defaultIndent, $bracketIndent) {
+        return flat_map($tree, function ($node) use ($indent, $deph, $defaultIndent, $bracketIndent) {
             $key = $node["key"];
             $value = getValue($node['value']);
             $children = $node["children"];
@@ -77,7 +75,6 @@ function stylish($tree)
             $newValue = iterValue($value, $deph);
             return ["{$indent}  {$symbol} {$key}: {", ...$newValue, "{$bracketIndent}}"];
         });
-        return $result;
     }
     $result = iterNode($tree, 0, $defaultIndent);
     return "{\n" . implode("\n", $result) . "\n}";
@@ -87,36 +84,42 @@ function plain($tree)
 {
     function inner($tree, $path)
     {
-        $result = flat_map($tree, function ($node) use ($path, $tree) {
+        return flat_map($tree, function ($node) use ($path, $tree) {
             $key = $node["key"];
-            $value = getValue($node['value'], 'plain');
+            $value = !is_array($node['value']) ? getValue($node['value'], 'plain') : "[complex value]";
             $children = $node["children"];
             $path = "{$path}.{$key}";
+            $type = $node["type"];
             if (is_array($children)) {
                 $newNode = inner($children, $path);
                 return [...$newNode];
             }
-            if (is_array($value)) {
-                $value = "[complex value]";
-            }
             $path = substr($path, 1);
-            switch ($node["type"]) {
-                case 'deleted':
-                    return "Property '{$path}' was removed";
-                case 'added':
-                    return "Property '{$path}' was added with value: {$value}";
-                case 'unchanged':
-                case 'changedTo':
-                    return;
-                default:
-                    $newValue = getNewValue($tree, $key);
-                    return "Property '{$path}' was updated. From {$value} to {$newValue}";
-            }
+            $resultString = getResultString($type, $path, $tree, $key, $value);
+            return $resultString;
         });
-        return $result;
     }
     $result = inner($tree, '');
     return implode("\n", $result);
+}
+
+function getResultString($type, $path, $tree, $key, $value)
+{
+    switch ($type) {
+        case 'deleted':
+            $resultString = "Property '{$path}' was removed";
+            break;
+        case 'added':
+            $resultString = "Property '{$path}' was added with value: {$value}";
+            break;
+        case 'unchanged':
+        case 'changedTo':
+            return;
+        default:
+            $newValue = getNewValue($tree, $key);
+            $resultString = "Property '{$path}' was updated. From {$value} to {$newValue}";
+    }
+    return $resultString;
 }
 
 function getNewValue($tree, $key)
