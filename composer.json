@@ -14,7 +14,7 @@
         "files": [
             "src/Utils.php",
             "src/Parsers.php",
-            "src/Stylish.php"
+            "src/Formatters.php"
         ]
     },
     "scripts": {

@@ -1,16 +1,21 @@
 <?php
 
-namespace Hexlet\Code\Stylish;
+namespace Hexlet\Code\Formatters;
 
 use function Functional\flat_map;
 
-function getValue($value)
+function getValue($value, $formatter = 'stylish')
 {
     switch (gettype($value)) {
         case 'boolean':
             return $value ? 'true' : 'false';
         case 'NULL':
             return 'null';
+        case 'string':
+            if ($formatter === 'plain') {
+                return "'{$value}'";
+            }
+            return $value;
         default:
             return $value;
     }
@@ -76,4 +81,45 @@ function stylish($tree)
     }
     $result = iterNode($tree, 0, $defaultIndent);
     return "{\n" . implode("\n", $result) . "\n}";
+}
+
+function plain($tree)
+{
+    function inner($tree, $path)
+    {
+        $result = flat_map($tree, function ($node) use ($path, $tree) {
+            $key = $node["key"];
+            $value = getValue($node['value'], 'plain');
+            $children = $node["children"];
+            $path = "{$path}.{$key}";
+            if (is_array($children)) {
+                $newNode = inner($children, $path);
+                return [...$newNode];
+            }
+            if (is_array($value)) {
+                $value = "[complex value]";
+            }
+            $path = substr($path, 1);
+            switch ($node["type"]) {
+                case 'deleted':
+                    return "Property '{$path}' was removed";
+                case 'added':
+                    return "Property '{$path}' was added with value: {$value}";
+                case 'unchanged':
+                    return;
+                case 'changedTo':
+                    return;
+                default:
+                    $filtredArray = array_filter($tree, function ($innerNode) use ($key) {
+                        return ($key === $innerNode["key"] && $innerNode["type"] === 'changedTo');
+                    });
+                    $filtredArray = array_values(($filtredArray));
+                    $newValue = getValue($filtredArray[0]["value"], 'plain');
+                    return "Property '{$path}' was updated. From {$value} to {$newValue}";
+            }
+        });
+        return $result;
+    }
+    $result = inner($tree, '');
+    return implode("\n", $result);
 }

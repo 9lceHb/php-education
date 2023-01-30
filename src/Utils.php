@@ -3,8 +3,8 @@
 namespace Hexlet\Code\Utils;
 
 use function Functional\flat_map;
-use function Hexlet\Code\Parsers\render;
-use function Hexlet\Code\Stylish\stylish;
+use function Hexlet\Code\Formatters\stylish;
+use function Hexlet\Code\Formatters\plain;
 
 function getNode($key, $type, $value = null, $chilren = null)
 {
@@ -57,5 +57,5 @@ function chooseFormat($format, $diff)
     if ($format === "stylish") {
         return stylish($diff);
     }
-    return stylish($diff);
+    return plain($diff);
 }

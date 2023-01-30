@@ -1,5 +1,4 @@
 #!/usr/bin/env php
-
 <?php
 
 use function Hexlet\Code\Utils\genDiff;
