@@ -95,7 +95,7 @@ function plain($tree)
                 return [...$newNode];
             }
             $path = substr($path, 1);
-            $resultString = getResultString($type, $path, $tree, $key, $value);
+            $resultString = getResultString($node, $path, $tree, $value);
             return $resultString;
         });
     }
@@ -103,8 +103,10 @@ function plain($tree)
     return implode("\n", $result);
 }
 
-function getResultString($type, $path, $tree, $key, $value)
+function getResultString($node, $path, $tree, $value)
 {
+    $key = $node["key"];
+    $type = $node["type"];
     switch ($type) {
         case 'deleted':
             $resultString = "Property '{$path}' was removed";
