@@ -87,7 +87,7 @@ function plain($tree)
     {
         return flat_map($tree, function ($node) use ($path, $tree) {
             $key = $node["key"];
-            $value = !is_array($node['value']) ? getValue($node['value'], 'plain') : "[complex value]";
+            $value = is_array($node['value']) ? "[complex value]" : getValue($node['value'], 'plain');
             $children = $node["children"];
             $path = "{$path}.{$key}";
             $type = $node["type"];
@@ -132,8 +132,5 @@ function getNewValue($tree, $key)
     });
     $filtredArray = array_values(($filtredArray));
     $newValue = getValue($filtredArray[0]["value"], 'plain');
-    print_r("--------------------\n");
-    print_r("{$newValue}\n");
-    print_r("--------------------\n");
     return $newValue;
 }
