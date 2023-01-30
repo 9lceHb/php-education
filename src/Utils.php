@@ -3,6 +3,7 @@
 namespace Hexlet\Code\Utils;
 
 use function Functional\flat_map;
+use function Functional\sort;
 use function Hexlet\Code\Formatters\stylish;
 use function Hexlet\Code\Formatters\plain;
 
@@ -37,7 +38,7 @@ function genDiff($before, $after)
         return [getNode($key, 'changedArray', null, $children)];
     });
     $result = array_merge($deletedElem, $addedElem, $sameKeyElem);
-    usort($result, function ($node1, $node2) {
+    $sorted = sort($result, function ($node1, $node2) {
         if ($node1["key"] !== $node2["key"]) {
             return $node1["key"] <=> $node2["key"];
         }
@@ -49,13 +50,17 @@ function genDiff($before, $after)
         }
         return 0;
     });
-    return $result;
+    return $sorted;
 }
 
 function chooseFormat($format, $diff)
 {
+    $format = strtolower($format);
     if ($format === "stylish") {
         return stylish($diff);
+    }
+    if ($format === "json") {
+        return json_encode($diff);
     }
     return plain($diff);
 }
