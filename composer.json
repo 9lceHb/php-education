@@ -1,5 +1,5 @@
 {
-    "name": "iseensky/file_diff",
+    "name": "hexlet/code",
     "license": "proprietary",
     "description": "utils for compare json or yaml files",
     "type": "project",
