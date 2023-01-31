@@ -24,9 +24,12 @@ function render(string $path)
         return false;
     }
     $text = file_get_contents($fullPath);
+    if ($text === false) {
+        return false;
+    }
     $extention = getExtention($path);
     if ($extention === 'json') {
-        return !!$text ? json_decode($text, true) : false;
+        return json_decode($text, true);
     }
     return Yaml::parseFile($fullPath);
 }

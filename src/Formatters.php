@@ -8,7 +8,8 @@ function getValue(mixed $value, string $formatter = 'stylish')
 {
     switch (gettype($value)) {
         case 'boolean':
-            return $value ? 'true' : 'false';
+            // return $value ? 'true' : 'false';
+            return var_export($value, true);
         case 'NULL':
             return 'null';
         case 'string':
