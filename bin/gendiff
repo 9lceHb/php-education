@@ -31,9 +31,7 @@ DOC;
 $args = Docopt::handle($doc, array('version' => 'gendiff 1.0'));
 $path1 = $args["<firstFile>"];
 $path2 = $args["<secondFile>"];
-$fullPath1 = render($path1);
-$fullPath2 = render($path2);
-$diff = genDiff($fullPath1, $fullPath2, $args['--format']);
+$diff = genDiff($path1, $path2, $args['--format']);
 
 echo $diff . PHP_EOL;
 // gendiff($path1, $path2);
