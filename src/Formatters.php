@@ -4,7 +4,7 @@ namespace Hexlet\Code\Formatters;
 
 use function Functional\flat_map;
 
-function getValue($value, string $formatter = 'stylish')
+function getValue(mixed $value, string $formatter = 'stylish')
 {
     switch (gettype($value)) {
         case 'boolean':
@@ -30,8 +30,7 @@ function iterValue(array $array, int $deph)
         $value = getValue($array[$key]);
         // $value = $array[$key];
         if (is_array($value)) {
-            $deph += 1;
-            $newValue = iterValue($value, $deph);
+            $newValue = iterValue($value, $deph + 1);
             return ["{$indent}    {$key}: {", ...$newValue, "{$bracketIndent}}"];
         }
         return ["{$indent}    {$key}: {$value}"];
@@ -61,15 +60,13 @@ function iterNode2(array $tree, int $deph, string $defaultIndent)
         $children = $node["children"];
         $symbol = getSymbol($node["type"]);
         if (is_array($children)) {
-            $deph += 1;
-            $newNode = iterNode2($children, $deph, $defaultIndent);
+            $newNode = iterNode2($children, $deph + 1, $defaultIndent);
             return ["{$indent}  {$symbol} {$key}: {", ...$newNode, "{$bracketIndent}}"];
         }
         if (!is_array($value)) {
             return "{$indent}  {$symbol} {$key}: {$value}";
         }
-        $deph += 1;
-        $newValue = iterValue($value, $deph);
+        $newValue = iterValue($value, $deph + 1);
         return ["{$indent}  {$symbol} {$key}: {", ...$newValue, "{$bracketIndent}}"];
     });
 }
@@ -81,31 +78,31 @@ function stylish(array $tree)
     return "{\n" . implode("\n", $result) . "\n}";
 }
 
-function inner1(array $tree, string $path)
+function plainInner1(array $tree, string $path)
 {
     return flat_map($tree, function ($node) use ($path, $tree) {
         $key = $node["key"];
         $value = is_array($node['value']) ? "[complex value]" : getValue($node['value'], 'plain');
         $children = $node["children"];
-        $path = "{$path}.{$key}";
+        $newPath = "{$path}.{$key}";
         $type = $node["type"];
         if (is_array($children)) {
-            $newNode = inner1($children, $path);
+            $newNode = plainInner1($children, $newPath);
             return [...$newNode];
         }
-        $path = substr($path, 1);
-        $resultString = getResultString($node, $path, $tree, $value);
+        $fullPath = substr($newPath, 1);
+        $resultString = getResultString($node, $fullPath, $tree, $value);
         return $resultString;
     });
 }
 
 function plain(array $tree)
 {
-    $result = inner1($tree, '');
+    $result = plainInner1($tree, '');
     return implode("\n", $result);
 }
 
-function getResultString(array $node, string $path, array $tree, $value)
+function getResultString(array $node, string $path, array $tree, mixed $value)
 {
     $key = $node["key"];
     $type = $node["type"];
@@ -128,10 +125,9 @@ function getResultString(array $node, string $path, array $tree, $value)
 
 function getNewValue(array $tree, string $key)
 {
-    $filtredArray = array_filter($tree, function ($innerNode) use ($key) {
+    $filtredArray = array_values(array_filter($tree, function ($innerNode) use ($key) {
         return ($key === $innerNode["key"] && $innerNode["type"] === 'changedTo');
-    });
-    $filtredArray = array_values(($filtredArray));
+    }));
     $newValue = getValue($filtredArray[0]["value"], 'plain');
     return is_array($newValue) ? "[complex value]" : $newValue;
 }

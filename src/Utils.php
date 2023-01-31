@@ -8,7 +8,7 @@ use function Hexlet\Code\Formatters\stylish;
 use function Hexlet\Code\Formatters\plain;
 use function Hexlet\Code\Parsers\render;
 
-function getNode(string $key, string $type, $value = null, array $chilren = null): array
+function getNode(string $key, string $type, mixed $value = null, array $chilren = null): array
 {
     $node = [
         "key" => $key,
@@ -58,17 +58,17 @@ function sortFunction(array $node1, array $node2): int
 
 function chooseFormat(string $format, array $diff)
 {
-    $format = strtolower($format);
-    if ($format === "stylish") {
+    $lowFormat = strtolower($format);
+    if ($lowFormat === "stylish") {
         return stylish($diff);
     }
-    if ($format === "json") {
+    if ($lowFormat === "json") {
         return json_encode($diff);
     }
     return plain($diff);
 }
 
-function genDiff(string $path1, string $path2, $format = "stylish")
+function genDiff(string $path1, string $path2, string $format = "stylish")
 {
     $before = render($path1);
     $after = render($path2);
