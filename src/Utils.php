@@ -70,8 +70,9 @@ function chooseFormat($format, $diff)
 
 function genDiff($path1, $path2, $format = "stylish")
 {
-    $before = render($path1);
-    $after = render($path2);
-    $diff = findDiff($before, $after);
-    return chooseFormat($format, $diff);
+    // $before = render($path1);
+    // $after = render($path2);
+    // $diff = findDiff($before, $after);
+    // return chooseFormat($format, $diff);
+    return 'LERRROOOOOOOOOOOOOOOOOOOYYYYYYY';
 }
