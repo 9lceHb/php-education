@@ -8,7 +8,7 @@ use function Hexlet\Code\Formatters\stylish;
 use function Hexlet\Code\Formatters\plain;
 use function Hexlet\Code\Parsers\render;
 
-function getNode($key, $type, $value = null, $chilren = null)
+function getNode(string $key, string $type, $value = null, array $chilren = null): array
 {
     $node = [
         "key" => $key,
@@ -19,7 +19,7 @@ function getNode($key, $type, $value = null, $chilren = null)
     return $node;
 }
 
-function findDiff($before, $after)
+function findDiff(array $before, array $after): array
 {
     $keysDeleted = array_keys(array_diff_key($before, $after));
     $keysAdded = array_keys(array_diff_key($after, $before));
@@ -42,7 +42,7 @@ function findDiff($before, $after)
     $sorted = sort($result, fn ($node1, $node2) => sortFunction($node1, $node2));
     return $sorted;
 }
-function sortFunction($node1, $node2)
+function sortFunction(array $node1, array $node2): int
 {
     if ($node1["key"] !== $node2["key"]) {
         return $node1["key"] <=> $node2["key"];
@@ -56,7 +56,7 @@ function sortFunction($node1, $node2)
     return 0;
 }
 
-function chooseFormat($format, $diff)
+function chooseFormat(string $format, array $diff)
 {
     $format = strtolower($format);
     if ($format === "stylish") {
@@ -68,7 +68,7 @@ function chooseFormat($format, $diff)
     return plain($diff);
 }
 
-function genDiff($path1, $path2, $format = "stylish")
+function genDiff(string $path1, string $path2, $format = "stylish")
 {
     $before = render($path1);
     $after = render($path2);

@@ -4,7 +4,7 @@ namespace Hexlet\Code\Formatters;
 
 use function Functional\flat_map;
 
-function getValue($value, $formatter = 'stylish')
+function getValue($value, string $formatter = 'stylish')
 {
     switch (gettype($value)) {
         case 'boolean':
@@ -21,7 +21,7 @@ function getValue($value, $formatter = 'stylish')
     }
 }
 
-function iterValue($array, $deph)
+function iterValue(array $array, int $deph)
 {
     $defaultIndentValues = '    ';
     $indent = str_repeat($defaultIndentValues, $deph);
@@ -37,7 +37,7 @@ function iterValue($array, $deph)
         return ["{$indent}    {$key}: {$value}"];
     });
 }
-function getSymbol($type)
+function getSymbol(string $type)
 {
     $symbols = [
         'deleted' => '-',
@@ -51,7 +51,7 @@ function getSymbol($type)
     return ' ';
 }
 
-function iterNode2($tree, $deph, $defaultIndent)
+function iterNode2(array $tree, int $deph, string $defaultIndent)
 {
     $indent = str_repeat($defaultIndent, $deph);
     $bracketIndent = str_repeat($defaultIndent, $deph + 1);
@@ -74,14 +74,14 @@ function iterNode2($tree, $deph, $defaultIndent)
     });
 }
 
-function stylish($tree)
+function stylish(array $tree)
 {
     $defaultIndent = '    ';
     $result = iterNode2($tree, 0, $defaultIndent);
     return "{\n" . implode("\n", $result) . "\n}";
 }
 
-function inner1($tree, $path)
+function inner1(array $tree, string $path)
 {
     return flat_map($tree, function ($node) use ($path, $tree) {
         $key = $node["key"];
@@ -99,13 +99,13 @@ function inner1($tree, $path)
     });
 }
 
-function plain($tree)
+function plain(array $tree)
 {
     $result = inner1($tree, '');
     return implode("\n", $result);
 }
 
-function getResultString($node, $path, $tree, $value)
+function getResultString(array $node, string $path, array $tree, $value)
 {
     $key = $node["key"];
     $type = $node["type"];
@@ -126,7 +126,7 @@ function getResultString($node, $path, $tree, $value)
     return $resultString;
 }
 
-function getNewValue($tree, $key)
+function getNewValue(array $tree, string $key)
 {
     $filtredArray = array_filter($tree, function ($innerNode) use ($key) {
         return ($key === $innerNode["key"] && $innerNode["type"] === 'changedTo');
