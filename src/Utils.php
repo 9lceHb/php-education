@@ -74,5 +74,5 @@ function genDiff($path1, $path2, $format = "stylish")
     // $after = render($path2);
     // $diff = findDiff($before, $after);
     // return chooseFormat($format, $diff);
-    return 'LERRROOOOOOOOOOOOOOOOOOOYYYYYYY';
+    return 'LERRROOOOOOOOOOOOOOOOOOOYYYYYYY jen';
 }
