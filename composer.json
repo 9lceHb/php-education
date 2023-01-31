@@ -1,9 +1,8 @@
 {
-    "name": "hexlet/code",
+    "name": "iseensky/file_diff",
     "license": "proprietary",
     "description": "utils for compare json or yaml files",
     "type": "project",
-    "stable": "1.0.0",
     "bin": [
         "/bin/gendiff"
     ],
@@ -23,7 +22,7 @@
     },
     "authors": [
         {
-            "name": "sergei",
+            "name": "IseenSky",
             "email": "yasen20008@gmail.com"
         }
     ],
